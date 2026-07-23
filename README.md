@@ -16,6 +16,16 @@ El sitio utiliza la API `speechSynthesis` del navegador. Selecciona una voz en e
 - `Escape` — detener
 - `←` / `→` — retroceder / avanzar frase
 
+## GitHub Pages
+
+El sitio se despliega automáticamente a GitHub Pages con el workflow en `.github/workflows/pages.yml`. Para activarlo:
+
+1. Ve a **Settings → Pages** en el repo.
+2. En **Build and deployment → Source** elige **GitHub Actions**.
+3. Empuja cualquier cambio a `main` o ejecuta el workflow manualmente.
+
+La URL será `https://nhilson73.github.io/CafeOps/`.
+
 ## Desarrollo local
 
 No requiere build. Sirve la carpeta raíz con cualquier servidor estático:
