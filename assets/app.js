@@ -77,8 +77,69 @@
 
   const headingMap = new Map();
 
+  const LAYER_COLORS = {
+    ferment: '#2D5F3F',
+    trace:   '#1F4E79',
+    roast:   '#B26B3D',
+    gold:    '#9C7C38',
+    vision:  '#4A3F6B',
+    horizon: '#1F3A5F',
+    actor:   '#B8860B',
+    action:  '#9C5F0F',
+    terroir: '#2D4A3E',
+    nebula:  '#1A2747',
+    moka:    '#4E342E',
+  };
+
+  function layerColorForChapter(n) {
+    if (n >= 5 && n <= 7) return LAYER_COLORS.ferment;
+    if (n >= 8 && n <= 10) return LAYER_COLORS.trace;
+    if (n >= 11 && n <= 13) return LAYER_COLORS.roast;
+    if (n >= 14 && n <= 16) return LAYER_COLORS.gold;
+    if (n >= 17 && n <= 18) return LAYER_COLORS.vision;
+    return LAYER_COLORS.moka;
+  }
+
+  function currentChapterColor(el) {
+    let color = LAYER_COLORS.moka;
+    let prev = el.previousElementSibling;
+    while (prev) {
+      if (/^H[1-4]$/.test(prev.tagName)) {
+        const m = prev.textContent.match(/Capítulo\s+(\d+)/i);
+        if (m) {
+          color = layerColorForChapter(parseInt(m[1], 10));
+          break;
+        }
+      }
+      prev = prev.previousElementSibling;
+    }
+    return color;
+  }
+
+  function applyStyleGuide() {
+    // Identify origin-closing blockquotes and color tables by chapter layer
+    $$('blockquote, table', elements.manuscript).forEach((el) => {
+      const color = currentChapterColor(el);
+      el.style.setProperty('--layer-color', color);
+
+      if (el.tagName === 'BLOCKQUOTE') {
+        const strong = el.querySelector('strong');
+        if (strong && /DESDE EL ORIGEN/i.test(strong.textContent)) {
+          el.classList.add('origin-close');
+        }
+      }
+
+      if (el.tagName === 'TABLE') {
+        const firstRow = el.rows[0];
+        if (firstRow && firstRow.cells.length === 1) {
+          el.classList.add('semantic-box');
+        }
+      }
+    });
+  }
+
   const render = async () => {
-    const res = await fetch('manuscript.md?v=2');
+    const res = await fetch('manuscript.md?v=3');
     if (!res.ok) throw new Error('No se pudo cargar el manuscrito');
     const raw = await res.text();
     const meta = parseFrontmatter(raw);
@@ -92,6 +153,7 @@
     }
 
     elements.manuscript.innerHTML = marked.parse(body);
+    applyStyleGuide();
 
     // Enrich headings with stable IDs and anchors
     const headings = $$('h1, h2, h3, h4', elements.manuscript);
