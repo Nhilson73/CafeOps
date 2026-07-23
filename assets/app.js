@@ -73,7 +73,7 @@
   elements.themeBtn.addEventListener('click', toggleTheme);
 
   // Marked configuration
-  marked.use({ gfm: true, breaks: false });
+  marked.setOptions({ gfm: true, breaks: false, html: true });
 
   const headingMap = new Map();
 
@@ -283,7 +283,7 @@
   };
 
   const prepareTts = () => {
-    const readable = $$('p, li, blockquote, td, th, h1, h2, h3, h4', elements.manuscript);
+    const readable = $$('p:not(td p), li, blockquote, td, th, h1, h2, h3, h4', elements.manuscript);
     readable.forEach((el) => {
       if (el.closest('pre, code')) return;
       el.dataset.tts = 'true';
