@@ -78,7 +78,7 @@
   const headingMap = new Map();
 
   const render = async () => {
-    const res = await fetch('manuscript.md');
+    const res = await fetch('manuscript.md?v=2');
     if (!res.ok) throw new Error('No se pudo cargar el manuscrito');
     const raw = await res.text();
     const meta = parseFrontmatter(raw);
